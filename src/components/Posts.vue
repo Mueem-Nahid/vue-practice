@@ -2,9 +2,10 @@
     <div>
         <h3>Posts:</h3>
         <hr>
-        <div v-for="post in posts" :key="post.id">
+        <input type="text" v-model="searchTerm" placeholder="Search">
+        <div v-for="post in filterSearch" :key="post.id">
             <h4 id="title">{{post.title}}</h4>
-            <p>{{post.body}}</p>
+            <p>{{post.body | snippet}}</p>
         </div>
 
     </div>
@@ -17,7 +18,15 @@ export default {
     name: 'Posts',
     data() {
         return {
-            posts: []
+            posts: [],
+            searchTerm: ''
+        }
+    },
+    computed: {
+        filterSearch() {
+            return this.posts.filter(post => {
+                return post.title.match(this.searchTerm)
+            })
         }
     },
     methods: {
@@ -27,7 +36,7 @@ export default {
     created() {
         axios.get('https://jsonplaceholder.typicode.com/posts')
         .then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             this.posts = res.data
         })
         .catch(err => {
